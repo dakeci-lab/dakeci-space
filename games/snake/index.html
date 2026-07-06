@@ -90,6 +90,7 @@
       margin: 0 auto;
       width: 100%;
       max-width: 360px;
+      touch-action: none;
     }
 
     canvas {
@@ -115,8 +116,20 @@
       padding: 20px;
     }
 
-    .overlay.hidden {
+    .overlay.hidden,
+    .screen.hidden,
+    .action-bar button.hidden {
       display: none;
+    }
+
+    .overlay h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .overlay p {
+      margin: 0 0 16px;
+      font-size: 15px;
     }
 
     button {
@@ -132,6 +145,75 @@
 
     button:hover {
       opacity: 0.9;
+    }
+
+    .difficulty {
+      width: 100%;
+      max-width: 280px;
+      margin-bottom: 16px;
+    }
+
+    .difficulty-label {
+      display: block;
+      color: #9ca3af;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .difficulty-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .difficulty-btns button {
+      flex: 1;
+      background: #374151;
+      color: white;
+      font-size: 14px;
+      padding: 10px 8px;
+    }
+
+    .difficulty-btns button.active {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    .countdown-num {
+      font-size: 72px;
+      font-weight: bold;
+      color: #22c55e;
+      line-height: 1;
+    }
+
+    .overlay-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 240px;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #374151;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .action-bar {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .action-bar button {
+      background: #374151;
+      color: white;
     }
 
     .controls {
@@ -183,28 +265,63 @@
         </div>
       </div>
 
-      <div class="game-wrap">
+      <div class="game-wrap" id="gameWrap">
         <canvas id="game" width="360" height="360"></canvas>
 
         <div class="overlay" id="overlay">
-          <h2 id="overlayTitle">Ойынға дайынсың ба?</h2>
-          <p id="overlayText">Ойын бірден басталмайды. Бастау батырмасын бас.</p>
-          <button id="startBtn">Ойынды бастау</button>
+          <div class="screen" id="startScreen">
+            <h2>Ойынға дайынсың ба?</h2>
+            <p>Ойын бірден басталмайды. Қиындықты таңдап, бастау батырмасын бас.</p>
+
+            <div class="difficulty">
+              <span class="difficulty-label">Қиындық</span>
+              <div class="difficulty-btns">
+                <button type="button" data-difficulty="easy">Easy</button>
+                <button type="button" data-difficulty="normal" class="active">Normal</button>
+                <button type="button" data-difficulty="hard">Hard</button>
+              </div>
+            </div>
+
+            <button type="button" id="startBtn">Начать игру</button>
+          </div>
+
+          <div class="screen hidden" id="countdownScreen">
+            <span class="countdown-num" id="countdownNum">3</span>
+          </div>
+
+          <div class="screen hidden" id="pauseScreen">
+            <h2>Пауза</h2>
+            <p>Ойын уақытша тоқтатылды.</p>
+            <button type="button" id="continueBtn">Continue</button>
+          </div>
+
+          <div class="screen hidden" id="gameOverScreen">
+            <h2>Ойын аяқталды</h2>
+            <p id="gameOverText">Ұпай: 0</p>
+            <div class="overlay-actions">
+              <button type="button" id="replayBtn">Играть снова</button>
+              <a href="../" class="btn-secondary">Вернуться в Игры</a>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="controls">
-        <button class="empty">.</button>
-        <button onclick="setDirection('up')">↑</button>
-        <button class="empty">.</button>
+      <div class="action-bar">
+        <button type="button" id="pauseBtn" class="hidden">Pause</button>
+      </div>
 
-        <button onclick="setDirection('left')">←</button>
-        <button onclick="setDirection('down')">↓</button>
-        <button onclick="setDirection('right')">→</button>
+      <div class="controls">
+        <button class="empty" type="button">.</button>
+        <button type="button" onclick="setDirection('up')">↑</button>
+        <button class="empty" type="button">.</button>
+
+        <button type="button" onclick="setDirection('left')">←</button>
+        <button type="button" onclick="setDirection('down')">↓</button>
+        <button type="button" onclick="setDirection('right')">→</button>
       </div>
 
       <div class="hint">
-        Компьютерде: стрелкалар немесе W/A/S/D. Телефонда: төмендегі батырмалар.
+        Компьютерде: стрелкалар немесе W/A/S/D. Телефонда: свайп, төмендегі батырмалар.
       </div>
     </div>
   </div>
@@ -212,16 +329,31 @@
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+    const gameWrap = document.getElementById("gameWrap");
 
     const scoreEl = document.getElementById("score");
     const bestEl = document.getElementById("best");
     const overlay = document.getElementById("overlay");
-    const overlayTitle = document.getElementById("overlayTitle");
-    const overlayText = document.getElementById("overlayText");
+    const startScreen = document.getElementById("startScreen");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const pauseScreen = document.getElementById("pauseScreen");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const countdownNum = document.getElementById("countdownNum");
+    const gameOverText = document.getElementById("gameOverText");
     const startBtn = document.getElementById("startBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const replayBtn = document.getElementById("replayBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const difficultyBtns = document.querySelectorAll("[data-difficulty]");
 
     const gridSize = 18;
     const tileCount = canvas.width / gridSize;
+
+    const SPEEDS = {
+      easy: 180,
+      normal: 120,
+      hard: 70
+    };
 
     let snake;
     let food;
@@ -232,9 +364,25 @@
     let score;
     let best = Number(localStorage.getItem("snakeBestScore")) || 0;
     let gameLoop;
+    let countdownTimer;
     let isRunning = false;
+    let isPaused = false;
+    let difficulty = "normal";
 
     bestEl.textContent = best;
+
+    function showScreen(screenId) {
+      [startScreen, countdownScreen, pauseScreen, gameOverScreen].forEach((screen) => {
+        screen.classList.add("hidden");
+      });
+
+      if (screenId) {
+        document.getElementById(screenId).classList.remove("hidden");
+        overlay.classList.remove("hidden");
+      } else {
+        overlay.classList.add("hidden");
+      }
+    }
 
     function resetGame() {
       snake = [
@@ -253,18 +401,77 @@
       drawGame();
     }
 
+    function startGameLoop() {
+      clearInterval(gameLoop);
+      gameLoop = setInterval(updateGame, SPEEDS[difficulty]);
+    }
+
+    function beginCountdown(onComplete) {
+      let count = 3;
+      showScreen("countdownScreen");
+      countdownNum.textContent = count;
+
+      clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        count--;
+
+        if (count > 0) {
+          countdownNum.textContent = count;
+          return;
+        }
+
+        clearInterval(countdownTimer);
+        showScreen(null);
+        onComplete();
+      }, 1000);
+    }
+
     function startGame() {
       resetGame();
-      overlay.classList.add("hidden");
-      isRunning = true;
+      isPaused = false;
+      isRunning = false;
+      pauseBtn.textContent = "Pause";
+      pauseBtn.classList.add("hidden");
 
+      beginCountdown(() => {
+        isRunning = true;
+        pauseBtn.classList.remove("hidden");
+        startGameLoop();
+      });
+    }
+
+    function pauseGame() {
+      if (!isRunning || isPaused) return;
+
+      isPaused = true;
       clearInterval(gameLoop);
-      gameLoop = setInterval(updateGame, 120);
+      pauseBtn.textContent = "Continue";
+      showScreen("pauseScreen");
+    }
+
+    function resumeGame() {
+      if (!isRunning || !isPaused) return;
+
+      isPaused = false;
+      pauseBtn.textContent = "Pause";
+      showScreen(null);
+      startGameLoop();
+    }
+
+    function togglePause() {
+      if (isPaused) {
+        resumeGame();
+      } else {
+        pauseGame();
+      }
     }
 
     function endGame() {
       isRunning = false;
+      isPaused = false;
       clearInterval(gameLoop);
+      clearInterval(countdownTimer);
+      pauseBtn.classList.add("hidden");
 
       if (score > best) {
         best = score;
@@ -272,10 +479,8 @@
         bestEl.textContent = best;
       }
 
-      overlayTitle.textContent = "Ойын аяқталды";
-      overlayText.textContent = "Ұпай: " + score + ". Қайта ойнап көр.";
-      startBtn.textContent = "Қайта бастау";
-      overlay.classList.remove("hidden");
+      gameOverText.textContent = "Ұпай: " + score + ".";
+      showScreen("gameOverScreen");
     }
 
     function updateGame() {
@@ -292,7 +497,7 @@
         head.y < 0 ||
         head.x >= tileCount ||
         head.y >= tileCount ||
-        snake.some(part => part.x === head.x && part.y === head.y)
+        snake.some((part) => part.x === head.x && part.y === head.y)
       ) {
         endGame();
         return;
@@ -351,13 +556,13 @@
           x: Math.floor(Math.random() * tileCount),
           y: Math.floor(Math.random() * tileCount)
         };
-      } while (snake.some(part => part.x === newFood.x && part.y === newFood.y));
+      } while (snake.some((part) => part.x === newFood.x && part.y === newFood.y));
 
       return newFood;
     }
 
     function setDirection(direction) {
-      if (!isRunning) return;
+      if (!isRunning || isPaused) return;
 
       if (direction === "up" && dy !== 1) {
         nextDx = 0;
@@ -386,8 +591,28 @@
       ctx.fill();
     }
 
+    function handleSwipe(startX, startY, endX, endY) {
+      const diffX = endX - startX;
+      const diffY = endY - startY;
+      const minSwipe = 30;
+
+      if (Math.abs(diffX) < minSwipe && Math.abs(diffY) < minSwipe) return;
+
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        setDirection(diffX > 0 ? "right" : "left");
+      } else {
+        setDirection(diffY > 0 ? "down" : "up");
+      }
+    }
+
     document.addEventListener("keydown", (event) => {
       const key = event.key.toLowerCase();
+
+      if (key === " " && isRunning) {
+        event.preventDefault();
+        togglePause();
+        return;
+      }
 
       if (key === "arrowup" || key === "w") setDirection("up");
       if (key === "arrowdown" || key === "s") setDirection("down");
@@ -395,8 +620,46 @@
       if (key === "arrowright" || key === "d") setDirection("right");
     });
 
-    startBtn.addEventListener("click", startGame);
+    let touchStartX = 0;
+    let touchStartY = 0;
 
+    gameWrap.addEventListener(
+      "touchstart",
+      (event) => {
+        if (event.touches.length !== 1) return;
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+      },
+      { passive: true }
+    );
+
+    gameWrap.addEventListener(
+      "touchend",
+      (event) => {
+        if (!isRunning || isPaused || event.changedTouches.length !== 1) return;
+
+        const touch = event.changedTouches[0];
+        handleSwipe(touchStartX, touchStartY, touch.clientX, touch.clientY);
+      },
+      { passive: true }
+    );
+
+    difficultyBtns.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (isRunning) return;
+
+        difficulty = button.dataset.difficulty;
+        difficultyBtns.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+      });
+    });
+
+    startBtn.addEventListener("click", startGame);
+    replayBtn.addEventListener("click", startGame);
+    continueBtn.addEventListener("click", resumeGame);
+    pauseBtn.addEventListener("click", togglePause);
+
+    showScreen("startScreen");
     resetGame();
   </script>
 </body>
