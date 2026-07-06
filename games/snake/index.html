@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Змейка — DakeCi Space</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+
+    a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: 36px;
+    }
+
+    p {
+      color: #d1d5db;
+    }
+
+    .card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      flex: 1;
+      background: #111827;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid #374151;
+    }
+
+    .stat span {
+      display: block;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+    }
+
+    .game-wrap {
+      position: relative;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 1 / 1;
+      background: #030712;
+      border: 2px solid #4b5563;
+      border-radius: 18px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.85);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .controls {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 70px 70px 70px;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .controls button {
+      background: #374151;
+      color: white;
+      font-size: 24px;
+      padding: 12px;
+    }
+
+    .controls .empty {
+      visibility: hidden;
+    }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="top">
+      <a href="../">← Игры</a>
+      <a href="../../">Басты бет</a>
+    </div>
+
+    <div class="card">
+      <h1>Змейка</h1>
+      <p>Жыланды басқарып, тамақ жина. Қабырғаға немесе өзіңе соғылма.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <span>Ұпай</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat">
+          <span>Рекорд</span>
+          <strong id="best">0</strong>
+        </div>
+      </div>
+
+      <div class="game-wrap">
+        <canvas id="game" width="360" height="360"></canvas>
+
+        <div class="overlay" id="overlay">
+          <h2 id="overlayTitle">Ойынға дайынсың ба?</h2>
+          <p id="overlayText">Ойын бірден басталмайды. Бастау батырмасын бас.</p>
+          <button id="startBtn">Ойынды бастау</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="empty">.</button>
+        <button onclick="setDirection('up')">↑</button>
+        <button class="empty">.</button>
+
+        <button onclick="setDirection('left')">←</button>
+        <button onclick="setDirection('down')">↓</button>
+        <button onclick="setDirection('right')">→</button>
+      </div>
+
+      <div class="hint">
+        Компьютерде: стрелкалар немесе W/A/S/D. Телефонда: төмендегі батырмалар.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayText = document.getElementById("overlayText");
+    const startBtn = document.getElementById("startBtn");
+
+    const gridSize = 18;
+    const tileCount = canvas.width / gridSize;
+
+    let snake;
+    let food;
+    let dx;
+    let dy;
+    let nextDx;
+    let nextDy;
+    let score;
+    let best = Number(localStorage.getItem("snakeBestScore")) || 0;
+    let gameLoop;
+    let isRunning = false;
+
+    bestEl.textContent = best;
+
+    function resetGame() {
+      snake = [
+        { x: 9, y: 9 },
+        { x: 8, y: 9 },
+        { x: 7, y: 9 }
+      ];
+
+      dx = 1;
+      dy = 0;
+      nextDx = 1;
+      nextDy = 0;
+      score = 0;
+      scoreEl.textContent = score;
+      food = createFood();
+      drawGame();
+    }
+
+    function startGame() {
+      resetGame();
+      overlay.classList.add("hidden");
+      isRunning = true;
+
+      clearInterval(gameLoop);
+      gameLoop = setInterval(updateGame, 120);
+    }
+
+    function endGame() {
+      isRunning = false;
+      clearInterval(gameLoop);
+
+      if (score > best) {
+        best = score;
+        localStorage.setItem("snakeBestScore", best);
+        bestEl.textContent = best;
+      }
+
+      overlayTitle.textContent = "Ойын аяқталды";
+      overlayText.textContent = "Ұпай: " + score + ". Қайта ойнап көр.";
+      startBtn.textContent = "Қайта бастау";
+      overlay.classList.remove("hidden");
+    }
+
+    function updateGame() {
+      dx = nextDx;
+      dy = nextDy;
+
+      const head = {
+        x: snake[0].x + dx,
+        y: snake[0].y + dy
+      };
+
+      if (
+        head.x < 0 ||
+        head.y < 0 ||
+        head.x >= tileCount ||
+        head.y >= tileCount ||
+        snake.some(part => part.x === head.x && part.y === head.y)
+      ) {
+        endGame();
+        return;
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        scoreEl.textContent = score;
+        food = createFood();
+      } else {
+        snake.pop();
+      }
+
+      drawGame();
+    }
+
+    function drawGame() {
+      ctx.fillStyle = "#030712";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawGrid();
+
+      ctx.fillStyle = "#ef4444";
+      roundRect(food.x * gridSize + 2, food.y * gridSize + 2, gridSize - 4, gridSize - 4, 5);
+
+      snake.forEach((part, index) => {
+        ctx.fillStyle = index === 0 ? "#22c55e" : "#16a34a";
+        roundRect(part.x * gridSize + 2, part.y * gridSize + 2, gridSize - 4, gridSize - 4, 5);
+      });
+    }
+
+    function drawGrid() {
+      ctx.strokeStyle = "#111827";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= canvas.width; i += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+      }
+    }
+
+    function createFood() {
+      let newFood;
+
+      do {
+        newFood = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } while (snake.some(part => part.x === newFood.x && part.y === newFood.y));
+
+      return newFood;
+    }
+
+    function setDirection(direction) {
+      if (!isRunning) return;
+
+      if (direction === "up" && dy !== 1) {
+        nextDx = 0;
+        nextDy = -1;
+      }
+
+      if (direction === "down" && dy !== -1) {
+        nextDx = 0;
+        nextDy = 1;
+      }
+
+      if (direction === "left" && dx !== 1) {
+        nextDx = -1;
+        nextDy = 0;
+      }
+
+      if (direction === "right" && dx !== -1) {
+        nextDx = 1;
+        nextDy = 0;
+      }
+    }
+
+    function roundRect(x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fill();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const key = event.key.toLowerCase();
+
+      if (key === "arrowup" || key === "w") setDirection("up");
+      if (key === "arrowdown" || key === "s") setDirection("down");
+      if (key === "arrowleft" || key === "a") setDirection("left");
+      if (key === "arrowright" || key === "d") setDirection("right");
+    });
+
+    startBtn.addEventListener("click", startGame);
+
+    resetGame();
+  </script>
+</body>
+</html>
