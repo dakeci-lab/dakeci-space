@@ -164,6 +164,81 @@
       line-height: 1.45;
     }
 
+    .game-over-box {
+      width: min(100%, 320px);
+    }
+
+    .save-score-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .save-score-form.hidden {
+      display: none;
+    }
+
+    .save-score-form input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .save-score-form input::placeholder {
+      color: #94a3b8;
+    }
+
+    .save-score-form input:focus {
+      border-color: rgba(34, 197, 94, 0.55);
+    }
+
+    .save-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: var(--accent);
+      color: #052e16;
+    }
+
+    .save-status {
+      margin: 10px 0 0;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .save-status.error {
+      color: #fca5a5;
+    }
+
+    .save-status.hidden {
+      display: none;
+    }
+
+    .replay-hint {
+      margin-top: 12px !important;
+      font-size: 13px !important;
+    }
+
+    .leaderboard-error {
+      color: #fca5a5;
+      font-size: 14px;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .leaderboard-error.hidden {
+      display: none;
+    }
+
     .controls {
       display: grid;
       grid-template-columns: repeat(3, 58px);
@@ -391,9 +466,15 @@
         </div>
 
         <div class="overlay" id="gameOverOverlay">
-          <div class="overlay-box">
+          <div class="overlay-box game-over-box">
             <p class="overlay-title">Игра окончена</p>
             <p class="overlay-text" id="gameOverText">Твой результат: 0</p>
+            <div class="save-score-form" id="saveScoreForm">
+              <input type="text" id="playerName" maxlength="24" placeholder="Ваше имя" autocomplete="nickname" />
+              <button type="button" class="save-btn" id="saveScoreBtn">Сохранить результат</button>
+            </div>
+            <p class="save-status hidden" id="saveStatus"></p>
+            <p class="overlay-text replay-hint">Нажми стрелку или «Начать заново», чтобы сыграть снова.</p>
           </div>
         </div>
       </div>
@@ -421,25 +502,34 @@
         <div class="food-item"><span><i class="square" style="background:var(--rare)"></i>Редкая</span><strong>+5</strong></div>
       </div>
 
-      <h2>🏆 Топ 10</h2>
-      <ol class="scoreboard" id="scoreboard"></ol>
+      <h2>🏆 ТОП игроков</h2>
+      <ol class="scoreboard" id="globalLeaderboard"></ol>
+      <p class="leaderboard-error hidden" id="leaderboardError">Рейтинг временно недоступен</p>
 
       <div class="action-row">
         <button class="action-btn" id="restartBtn">Начать заново</button>
-        <button class="action-btn" id="clearBtn">Очистить рекорды</button>
       </div>
     </aside>
   </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
+  const SUPABASE_URL = "https://sqjkmgjobayksliruean.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxamttZ2pvYmF5a3NsaXJ1ZWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTE5NTQsImV4cCI6MjA5ODkyNzk1NH0.77zWjxgl6WnWUUxd1US7au3lJQqQ-bU0Le08scu4HVI";
+
+  const supabase = window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
 
   const scoreEl = document.getElementById("score");
   const bestEl = document.getElementById("best");
   const levelEl = document.getElementById("level");
-  const scoreboardEl = document.getElementById("scoreboard");
+  const globalLeaderboardEl = document.getElementById("globalLeaderboard");
+  const leaderboardErrorEl = document.getElementById("leaderboardError");
 
   const startOverlay = document.getElementById("startOverlay");
   const levelOverlay = document.getElementById("levelOverlay");
@@ -447,6 +537,10 @@
   const pauseOverlay = document.getElementById("pauseOverlay");
   const gameOverOverlay = document.getElementById("gameOverOverlay");
   const gameOverText = document.getElementById("gameOverText");
+  const saveScoreForm = document.getElementById("saveScoreForm");
+  const playerNameInput = document.getElementById("playerName");
+  const saveScoreBtn = document.getElementById("saveScoreBtn");
+  const saveStatus = document.getElementById("saveStatus");
   const canvasWrap = document.getElementById("canvasWrap");
 
   const CELL = 25;
@@ -478,51 +572,122 @@
     { x: Math.floor(COLS / 2), y: ROWS - 1 - Math.round(ROWS * 0.20) },
   ];
 
-  function loadScores() {
-    try {
-      return JSON.parse(localStorage.getItem("snakeTop10") || "[]").filter(Number.isFinite);
-    } catch {
-      return [];
+  function getBest() {
+    return Number(localStorage.getItem("snakeBest") || 0);
+  }
+
+  function updateLocalBest(value) {
+    if (value > getBest()) {
+      localStorage.setItem("snakeBest", String(value));
+      bestEl.textContent = value;
     }
   }
 
-  function saveScores(scores) {
-    localStorage.setItem("snakeTop10", JSON.stringify(scores.slice(0, 10)));
+  function showLeaderboardError() {
+    globalLeaderboardEl.innerHTML = "";
+    leaderboardErrorEl.classList.remove("hidden");
   }
 
-  function getBest() {
-    const scores = loadScores();
-    const oldBest = Number(localStorage.getItem("snakeBest") || 0);
-    return Math.max(oldBest, scores[0] || 0);
-  }
+  function renderGlobalLeaderboard(rows) {
+    leaderboardErrorEl.classList.add("hidden");
+    globalLeaderboardEl.innerHTML = "";
 
-  function updateScoreboard() {
-    const scores = loadScores();
-    bestEl.textContent = getBest();
-
-    scoreboardEl.innerHTML = "";
-    if (scores.length === 0) {
+    if (!rows || rows.length === 0) {
       const li = document.createElement("li");
       li.innerHTML = "<span>Пока пусто</span><strong>—</strong>";
-      scoreboardEl.appendChild(li);
+      globalLeaderboardEl.appendChild(li);
       return;
     }
 
-    scores.forEach((value, index) => {
+    rows.forEach((row, index) => {
       const li = document.createElement("li");
-      li.innerHTML = `<span>${index + 1}. место</span><strong>${value}</strong>`;
-      scoreboardEl.appendChild(li);
+      const name = row.player_name || "Игрок";
+      li.innerHTML = `<span>${index + 1}. ${escapeHtml(name)}</span><strong>${row.score}</strong>`;
+      globalLeaderboardEl.appendChild(li);
     });
   }
 
-  function addTopScore(value) {
-    if (value <= 0) return;
-    const scores = loadScores();
-    scores.push(value);
-    scores.sort((a, b) => b - a);
-    saveScores(scores);
-    localStorage.setItem("snakeBest", String(Math.max(value, getBest())));
-    updateScoreboard();
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  async function loadGlobalLeaderboard() {
+    bestEl.textContent = getBest();
+
+    if (!supabase) {
+      showLeaderboardError();
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("snake_scores")
+        .select("player_name, score")
+        .eq("game", "snake")
+        .order("score", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      renderGlobalLeaderboard(data);
+    } catch {
+      showLeaderboardError();
+    }
+  }
+
+  function resetSaveForm() {
+    saveScoreForm.classList.remove("hidden");
+    saveStatus.classList.add("hidden");
+    saveStatus.classList.remove("error");
+    saveStatus.textContent = "";
+    saveScoreBtn.disabled = false;
+    playerNameInput.value = localStorage.getItem("snakePlayerName") || "";
+  }
+
+  function showSaveMessage(text, isError = false) {
+    saveStatus.textContent = text;
+    saveStatus.classList.remove("hidden");
+    saveStatus.classList.toggle("error", isError);
+  }
+
+  async function saveScoreToSupabase() {
+    const playerName = playerNameInput.value.trim();
+
+    if (!playerName) {
+      showSaveMessage("Введите имя", true);
+      playerNameInput.focus();
+      return;
+    }
+
+    if (!supabase) {
+      showSaveMessage("Рейтинг временно недоступен", true);
+      return;
+    }
+
+    saveScoreBtn.disabled = true;
+
+    try {
+      const { error } = await supabase
+        .from("snake_scores")
+        .insert([{
+          player_name: playerName,
+          score: score,
+          game: "snake"
+        }]);
+
+      if (error) throw error;
+
+      localStorage.setItem("snakePlayerName", playerName);
+      saveScoreForm.classList.add("hidden");
+      showSaveMessage("Результат сохранён");
+      await loadGlobalLeaderboard();
+    } catch {
+      saveScoreBtn.disabled = false;
+      showSaveMessage("Рейтинг временно недоступен", true);
+    }
   }
 
   function initAudio() {
@@ -634,6 +799,7 @@
     pauseOverlay.classList.remove("show");
     gameOverOverlay.classList.remove("show");
     canvasWrap.classList.remove("flash");
+    resetSaveForm();
 
     setTheme();
     placeFood();
@@ -702,10 +868,11 @@
   function endGame() {
     gameOver = true;
     clearInterval(timer);
-    addTopScore(score);
+    updateLocalBest(score);
     playCrash();
     canvasWrap.classList.add("flash");
-    gameOverText.textContent = `Твой результат: ${score}. Рекорд: ${getBest()}. Нажми стрелку, чтобы сыграть снова.`;
+    resetSaveForm();
+    gameOverText.textContent = `Твой результат: ${score}. Рекорд: ${Math.max(score, getBest())}.`;
     setTimeout(() => gameOverOverlay.classList.add("show"), 350);
   }
 
@@ -735,10 +902,7 @@
       const previousScore = score;
       score += food.points;
       scoreEl.textContent = score;
-      if (score > getBest()) {
-        localStorage.setItem("snakeBest", String(score));
-        bestEl.textContent = score;
-      }
+      updateLocalBest(score);
       playEat(food.type);
       levelUpIfNeeded(previousScore, score);
       placeFood();
@@ -927,10 +1091,12 @@
     togglePause();
   });
   document.getElementById("restartBtn").addEventListener("click", resetGame);
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    localStorage.removeItem("snakeTop10");
-    localStorage.removeItem("snakeBest");
-    updateScoreboard();
+  saveScoreBtn.addEventListener("click", saveScoreToSupabase);
+  playerNameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      saveScoreToSupabase();
+    }
   });
 
   // Safari иногда не поддерживает roundRect в старых версиях.
@@ -947,7 +1113,8 @@
     };
   }
 
-  updateScoreboard();
+  bestEl.textContent = getBest();
+  loadGlobalLeaderboard();
   resetGame();
 })();
 </script>
