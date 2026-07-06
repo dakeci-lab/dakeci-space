@@ -39,6 +39,131 @@
       overflow-x: hidden;
     }
 
+    .page-wrap {
+      width: min(980px, 100%);
+    }
+
+    .top-nav {
+      margin-bottom: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .back-link:hover {
+      opacity: 0.92;
+    }
+
+    .player-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .player-bar strong {
+      color: var(--text);
+    }
+
+    .switch-player-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .switch-player-btn:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.14);
+    }
+
+    .player-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2,6,23,0.88);
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .player-modal.show {
+      display: flex;
+    }
+
+    .player-modal-box {
+      width: min(100%, 360px);
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+
+    .player-modal-box h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .player-modal-box p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .player-modal-box input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .player-modal-box input:focus {
+      border-color: rgba(34, 197, 94, 0.55);
+    }
+
+    .register-btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: var(--accent);
+      color: #052e16;
+    }
+
     .game-shell {
       width: min(980px, 100%);
       display: grid;
@@ -168,44 +293,16 @@
       width: min(100%, 320px);
     }
 
-    .save-score-form {
+    .game-over-actions {
       display: grid;
       gap: 10px;
       margin-top: 14px;
     }
 
-    .save-score-form.hidden {
-      display: none;
-    }
-
-    .save-score-form input {
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .save-score-form input::placeholder {
-      color: #94a3b8;
-    }
-
-    .save-score-form input:focus {
-      border-color: rgba(34, 197, 94, 0.55);
-    }
-
-    .save-btn {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 18px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      background: var(--accent);
-      color: #052e16;
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
     }
 
     .save-status {
@@ -325,12 +422,20 @@
     .scoreboard li {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
+      align-items: center;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.10);
       padding: 8px 10px;
       border-radius: 12px;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .scoreboard .meta {
+      color: var(--text);
+      font-size: 13px;
+      white-space: nowrap;
     }
 
     .action-row {
@@ -428,11 +533,30 @@
   </style>
 </head>
 <body>
-  <div class="game-shell">
+  <div class="player-modal" id="playerModal">
+    <div class="player-modal-box">
+      <h2>Введите имя игрока</h2>
+      <p>Имя сохранится на этом устройстве. Каждое устройство — отдельный игрок.</p>
+      <input type="text" id="registerPlayerName" maxlength="24" placeholder="Ваше имя" autocomplete="nickname" />
+      <button type="button" class="register-btn" id="registerPlayerBtn">Продолжить</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <a href="../" class="back-link">← Назад к играм</a>
+    </nav>
+
+    <div class="game-shell">
     <main class="main-card" id="mainCard">
       <div class="title-row">
         <h1>🐍 Змейка</h1>
         <div class="badge">by DakeCi</div>
+      </div>
+
+      <div class="player-bar">
+        <span class="player-label">Игрок: <strong id="currentPlayerName">—</strong></span>
+        <button type="button" class="switch-player-btn" id="switchPlayerBtn">Сменить игрока</button>
       </div>
 
       <div class="stats">
@@ -469,11 +593,10 @@
           <div class="overlay-box game-over-box">
             <p class="overlay-title">Игра окончена</p>
             <p class="overlay-text" id="gameOverText">Твой результат: 0</p>
-            <div class="save-score-form" id="saveScoreForm">
-              <input type="text" id="playerName" maxlength="24" placeholder="Ваше имя" autocomplete="nickname" />
-              <button type="button" class="save-btn" id="saveScoreBtn">Сохранить результат</button>
-            </div>
             <p class="save-status hidden" id="saveStatus"></p>
+            <div class="game-over-actions">
+              <a href="../" class="action-btn back-btn">Вернуться в Игры</a>
+            </div>
             <p class="overlay-text replay-hint">Нажми стрелку или «Начать заново», чтобы сыграть снова.</p>
           </div>
         </div>
@@ -510,6 +633,7 @@
         <button class="action-btn" id="restartBtn">Начать заново</button>
       </div>
     </aside>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -517,6 +641,8 @@
 (() => {
   const SUPABASE_URL = "https://sqjkmgjobayksliruean.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxamttZ2pvYmF5a3NsaXJ1ZWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTE5NTQsImV4cCI6MjA5ODkyNzk1NH0.77zWjxgl6WnWUUxd1US7au3lJQqQ-bU0Le08scu4HVI";
+  const PLAYER_ID_KEY = "snakePlayerId";
+  const PLAYER_NAME_KEY = "snakePlayerName";
 
   const supabase = window.supabase
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -530,6 +656,11 @@
   const levelEl = document.getElementById("level");
   const globalLeaderboardEl = document.getElementById("globalLeaderboard");
   const leaderboardErrorEl = document.getElementById("leaderboardError");
+  const currentPlayerNameEl = document.getElementById("currentPlayerName");
+  const playerModal = document.getElementById("playerModal");
+  const registerPlayerNameInput = document.getElementById("registerPlayerName");
+  const registerPlayerBtn = document.getElementById("registerPlayerBtn");
+  const switchPlayerBtn = document.getElementById("switchPlayerBtn");
 
   const startOverlay = document.getElementById("startOverlay");
   const levelOverlay = document.getElementById("levelOverlay");
@@ -537,9 +668,6 @@
   const pauseOverlay = document.getElementById("pauseOverlay");
   const gameOverOverlay = document.getElementById("gameOverOverlay");
   const gameOverText = document.getElementById("gameOverText");
-  const saveScoreForm = document.getElementById("saveScoreForm");
-  const playerNameInput = document.getElementById("playerName");
-  const saveScoreBtn = document.getElementById("saveScoreBtn");
   const saveStatus = document.getElementById("saveStatus");
   const canvasWrap = document.getElementById("canvasWrap");
 
@@ -564,6 +692,8 @@
   let gameOver = false;
   let audioReady = false;
   let audioCtx = null;
+  let currentPlayerId = null;
+  let currentPlayerName = null;
 
   const stones = [
     { x: Math.round(COLS * 0.20), y: Math.floor(ROWS / 2) },
@@ -571,6 +701,62 @@
     { x: Math.floor(COLS / 2), y: Math.round(ROWS * 0.20) },
     { x: Math.floor(COLS / 2), y: ROWS - 1 - Math.round(ROWS * 0.20) },
   ];
+
+  function updatePlayerUI() {
+    currentPlayerNameEl.textContent = currentPlayerName || "—";
+  }
+
+  function loadPlayerFromStorage() {
+    currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
+    currentPlayerName = localStorage.getItem(PLAYER_NAME_KEY);
+    updatePlayerUI();
+    return !!(currentPlayerId && currentPlayerName);
+  }
+
+  function savePlayerToStorage(id, name) {
+    currentPlayerId = id;
+    currentPlayerName = name;
+    localStorage.setItem(PLAYER_ID_KEY, id);
+    localStorage.setItem(PLAYER_NAME_KEY, name);
+    updatePlayerUI();
+  }
+
+  function clearPlayerStorage() {
+    currentPlayerId = null;
+    currentPlayerName = null;
+    localStorage.removeItem(PLAYER_ID_KEY);
+    localStorage.removeItem(PLAYER_NAME_KEY);
+    updatePlayerUI();
+  }
+
+  function showPlayerModal() {
+    playerModal.classList.add("show");
+    registerPlayerNameInput.value = "";
+    setTimeout(() => registerPlayerNameInput.focus(), 50);
+  }
+
+  function hidePlayerModal() {
+    playerModal.classList.remove("show");
+  }
+
+  function registerPlayer() {
+    const name = registerPlayerNameInput.value.trim();
+    if (!name) {
+      registerPlayerNameInput.focus();
+      return;
+    }
+
+    const id = crypto.randomUUID();
+    savePlayerToStorage(id, name);
+    hidePlayerModal();
+    resetGame();
+    loadGlobalLeaderboard();
+  }
+
+  function switchPlayer() {
+    clearPlayerStorage();
+    showPlayerModal();
+  }
 
   function getBest() {
     return Number(localStorage.getItem("snakeBest") || 0);
@@ -602,7 +788,9 @@
     rows.forEach((row, index) => {
       const li = document.createElement("li");
       const name = row.player_name || "Игрок";
-      li.innerHTML = `<span>${index + 1}. ${escapeHtml(name)}</span><strong>${row.score}</strong>`;
+      const bestScore = Number(row.best_score) || 0;
+      const gamesPlayed = Number(row.games_played) || 0;
+      li.innerHTML = `<span>${index + 1}. ${escapeHtml(name)}</span><span class="meta">${bestScore} · ${gamesPlayed} игр</span>`;
       globalLeaderboardEl.appendChild(li);
     });
   }
@@ -625,10 +813,10 @@
 
     try {
       const { data, error } = await supabase
-        .from("snake_scores")
-        .select("player_name, score")
+        .from("snake_players")
+        .select("player_name, best_score, games_played")
         .eq("game", "snake")
-        .order("score", { ascending: false })
+        .order("best_score", { ascending: false })
         .limit(10);
 
       if (error) throw error;
@@ -638,54 +826,72 @@
     }
   }
 
-  function resetSaveForm() {
-    saveScoreForm.classList.remove("hidden");
-    saveStatus.classList.add("hidden");
-    saveStatus.classList.remove("error");
-    saveStatus.textContent = "";
-    saveScoreBtn.disabled = false;
-    playerNameInput.value = localStorage.getItem("snakePlayerName") || "";
-  }
-
   function showSaveMessage(text, isError = false) {
     saveStatus.textContent = text;
     saveStatus.classList.remove("hidden");
     saveStatus.classList.toggle("error", isError);
   }
 
-  async function saveScoreToSupabase() {
-    const playerName = playerNameInput.value.trim();
+  function resetSaveStatus() {
+    saveStatus.classList.add("hidden");
+    saveStatus.classList.remove("error");
+    saveStatus.textContent = "";
+  }
 
-    if (!playerName) {
-      showSaveMessage("Введите имя", true);
-      playerNameInput.focus();
-      return;
-    }
+  async function savePlayerResult(gameScore) {
+    if (!currentPlayerId || !currentPlayerName) return;
 
     if (!supabase) {
       showSaveMessage("Рейтинг временно недоступен", true);
       return;
     }
 
-    saveScoreBtn.disabled = true;
+    const now = new Date().toISOString();
 
     try {
-      const { error } = await supabase
-        .from("snake_scores")
-        .insert([{
-          player_name: playerName,
-          score: score,
-          game: "snake"
-        }]);
+      const { data: existing, error: fetchError } = await supabase
+        .from("snake_players")
+        .select("player_id, best_score, games_played")
+        .eq("player_id", currentPlayerId)
+        .eq("game", "snake")
+        .maybeSingle();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
 
-      localStorage.setItem("snakePlayerName", playerName);
-      saveScoreForm.classList.add("hidden");
+      if (existing) {
+        const { error } = await supabase
+          .from("snake_players")
+          .update({
+            player_name: currentPlayerName,
+            best_score: Math.max(Number(existing.best_score) || 0, gameScore),
+            last_score: gameScore,
+            games_played: (Number(existing.games_played) || 0) + 1,
+            updated_at: now
+          })
+          .eq("player_id", currentPlayerId)
+          .eq("game", "snake");
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("snake_players")
+          .insert([{
+            player_id: currentPlayerId,
+            player_name: currentPlayerName,
+            best_score: gameScore,
+            last_score: gameScore,
+            games_played: 1,
+            game: "snake",
+            created_at: now,
+            updated_at: now
+          }]);
+
+        if (error) throw error;
+      }
+
       showSaveMessage("Результат сохранён");
       await loadGlobalLeaderboard();
     } catch {
-      saveScoreBtn.disabled = false;
       showSaveMessage("Рейтинг временно недоступен", true);
     }
   }
@@ -799,7 +1005,7 @@
     pauseOverlay.classList.remove("show");
     gameOverOverlay.classList.remove("show");
     canvasWrap.classList.remove("flash");
-    resetSaveForm();
+    resetSaveStatus();
 
     setTheme();
     placeFood();
@@ -831,7 +1037,12 @@
     }
   }
 
+  function hasRegisteredPlayer() {
+    return !!(currentPlayerId && currentPlayerName);
+  }
+
   function setDirection(newDir) {
+    if (!hasRegisteredPlayer()) return;
     initAudio();
 
     if (gameOver) {
@@ -855,6 +1066,7 @@
   }
 
   function togglePause() {
+    if (!hasRegisteredPlayer()) return;
     if (gameOver) return;
     if (!started) {
       started = true;
@@ -871,9 +1083,12 @@
     updateLocalBest(score);
     playCrash();
     canvasWrap.classList.add("flash");
-    resetSaveForm();
+    resetSaveStatus();
     gameOverText.textContent = `Твой результат: ${score}. Рекорд: ${Math.max(score, getBest())}.`;
-    setTimeout(() => gameOverOverlay.classList.add("show"), 350);
+    setTimeout(() => {
+      gameOverOverlay.classList.add("show");
+      savePlayerResult(score);
+    }, 350);
   }
 
   function tick() {
@@ -1091,13 +1306,14 @@
     togglePause();
   });
   document.getElementById("restartBtn").addEventListener("click", resetGame);
-  saveScoreBtn.addEventListener("click", saveScoreToSupabase);
-  playerNameInput.addEventListener("keydown", (event) => {
+  registerPlayerBtn.addEventListener("click", registerPlayer);
+  registerPlayerNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      saveScoreToSupabase();
+      registerPlayer();
     }
   });
+  switchPlayerBtn.addEventListener("click", switchPlayer);
 
   // Safari иногда не поддерживает roundRect в старых версиях.
   if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -1115,7 +1331,13 @@
 
   bestEl.textContent = getBest();
   loadGlobalLeaderboard();
-  resetGame();
+
+  if (loadPlayerFromStorage()) {
+    resetGame();
+  } else {
+    showPlayerModal();
+    resetGame();
+  }
 })();
 </script>
 </body>
