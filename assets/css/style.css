@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Russo+One&display=swap');
+
 :root {
   --bg: #070b14;
   --bg-elevated: #0d1424;
@@ -18,6 +20,8 @@
   --radius-sm: 10px;
   --container: 1100px;
   --header-h: 68px;
+  --font-display: "Russo One", "Roboto Condensed", Arial, sans-serif;
+  --font-body: "Roboto Condensed", Arial, sans-serif;
 }
 
 * {
@@ -31,7 +35,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-body);
+  letter-spacing: 0.2px;
   color: var(--text);
   background:
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
@@ -43,6 +48,24 @@ body {
   background-attachment: fixed;
 }
 
+.logo,
+.site-logo,
+.brand,
+.site-nav a,
+.nav a,
+.hero h1,
+.page-title,
+.section-title,
+.section-head h2,
+.card-title,
+.card h3,
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -51,6 +74,29 @@ a {
 img {
   max-width: 100%;
   display: block;
+}
+
+.site-header,
+.site-nav,
+.btn,
+.card,
+.game-card,
+.main-card,
+.side-card {
+  font-family: var(--font-body);
+}
+
+.site-nav a,
+.nav a,
+.nav-link,
+.btn,
+.card-badge,
+.section-kicker,
+.breadcrumb a,
+.brand {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
 }
 
 .site-header {
@@ -76,9 +122,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .brand-badge {
@@ -90,6 +134,7 @@ img {
   background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
   color: #041016;
   font-size: 0.95rem;
+  font-family: var(--font-display);
   box-shadow: 0 8px 20px rgba(34, 197, 94, 0.25);
 }
 
@@ -102,11 +147,11 @@ img {
 }
 
 .nav-link {
-  padding: 9px 14px;
+  padding: 10px 15px;
   border-radius: 999px;
   color: var(--muted);
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 400;
   border: 1px solid transparent;
   transition: 0.18s ease;
 }
@@ -127,6 +172,7 @@ img {
   padding: 8px 12px;
   font-size: 1rem;
   cursor: pointer;
+  font-family: var(--font-display);
 }
 
 .page {
@@ -151,18 +197,26 @@ img {
 }
 
 .hero h1 {
-  margin: 0 0 10px;
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  letter-spacing: -0.05em;
-  line-height: 1.05;
+  margin: 0 0 12px;
+  font-size: clamp(42px, 8vw, 86px);
+  line-height: 0.95;
+  text-transform: uppercase;
 }
 
-.hero p {
+.hero p,
+.page-lead,
+.page-description {
   margin: 0;
   color: var(--muted);
-  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  font-size: 18px;
   line-height: 1.55;
   max-width: 720px;
+}
+
+.page-lead,
+.page-description {
+  max-width: 760px;
+  margin-bottom: 22px;
 }
 
 .hero-actions,
@@ -185,16 +239,22 @@ img {
   margin-bottom: 14px;
 }
 
+.section-title,
 .section-head h2 {
   margin: 0;
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  letter-spacing: -0.03em;
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-.section-head p {
+.section-head p,
+.section-kicker {
   margin: 0;
   color: var(--muted);
   font-size: 0.95rem;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0.2px;
 }
 
 .card-grid {
@@ -203,7 +263,8 @@ img {
   gap: 14px;
 }
 
-.card {
+.card,
+.game-card {
   border: 1px solid var(--border);
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -212,7 +273,8 @@ img {
   transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
-.card:hover {
+.card:hover,
+.game-card:hover {
   transform: translateY(-3px);
   border-color: var(--border-hover);
   background: var(--bg-card-hover);
@@ -233,16 +295,23 @@ img {
 .card-icon.orange { background: rgba(251, 146, 60, 0.18); }
 .card-icon.purple { background: rgba(167, 139, 250, 0.18); }
 
+.card-title,
 .card h3 {
   margin: 0 0 8px;
-  font-size: 1.15rem;
+  font-size: 24px;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
+.card-description,
 .card p {
   margin: 0 0 14px;
   color: var(--muted);
-  line-height: 1.5;
-  font-size: 0.95rem;
+  font-size: 18px;
+  line-height: 1.55;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0.2px;
 }
 
 .btn {
@@ -251,12 +320,14 @@ img {
   justify-content: center;
   gap: 8px;
   border-radius: var(--radius-md);
-  padding: 11px 16px;
-  font-size: 0.95rem;
+  padding: 12px 18px;
+  font-size: 0.9rem;
   font-weight: 700;
   border: 1px solid transparent;
   cursor: pointer;
   transition: 0.18s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
 
 .btn-primary {
@@ -288,16 +359,10 @@ img {
 }
 
 .page-title {
-  margin: 0 0 8px;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  letter-spacing: -0.04em;
-}
-
-.page-lead {
-  margin: 0 0 22px;
-  color: var(--muted);
-  line-height: 1.55;
-  max-width: 760px;
+  margin: 0 0 10px;
+  font-size: clamp(34px, 6vw, 64px);
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .breadcrumb {
@@ -313,8 +378,7 @@ img {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.04);
   color: var(--accent-blue);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.82rem;
 }
 
 .breadcrumb a:hover {
@@ -339,11 +403,14 @@ img {
 
 .update-item span {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 1rem;
+  line-height: 1.45;
 }
 
 .update-item strong {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.4px;
 }
 
 .site-footer {
@@ -361,7 +428,7 @@ img {
   gap: 10px 18px;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .footer-links {
@@ -372,10 +439,21 @@ img {
 
 .footer-links a {
   color: var(--muted);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.82rem;
 }
 
 .footer-links a:hover {
   color: var(--text);
+}
+
+.page-snake .title-row h1,
+.page-snake .overlay-title,
+.page-snake .side-card h2 {
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
 }
 
 @media (max-width: 900px) {
@@ -408,6 +486,13 @@ img {
   .nav-link {
     width: 100%;
     border-radius: 12px;
+    font-size: 0.78rem;
+    padding: 11px 14px;
+  }
+
+  .brand {
+    font-size: 0.92rem;
+    max-width: calc(100% - 56px);
   }
 
   .card-grid {
@@ -418,8 +503,54 @@ img {
     padding: 24px 18px;
   }
 
+  .hero h1 {
+    font-size: clamp(34px, 11vw, 56px);
+    line-height: 0.98;
+  }
+
+  .page-title {
+    font-size: clamp(28px, 9vw, 48px);
+  }
+
+  .section-title,
+  .section-head h2 {
+    font-size: clamp(20px, 6vw, 30px);
+  }
+
+  .card-title,
+  .card h3 {
+    font-size: 20px;
+  }
+
+  .card-description,
+  .card p,
+  .hero p,
+  .page-lead,
+  .page-description {
+    font-size: 16px;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.82rem;
+  }
+
+  .hero-actions .btn,
+  .card .btn {
+    width: auto;
+    min-width: 140px;
+  }
+
   .update-item {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-actions .btn,
+  .card .btn {
+    width: 100%;
   }
 }
