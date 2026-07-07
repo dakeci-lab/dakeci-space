@@ -16,8 +16,8 @@ function initSiteNav() {
 }
 
 function initPasswordGenerator() {
-  const tool = document.getElementById("passwordTool");
-  if (!tool) return;
+  const passwordGenerator = document.querySelector("[data-password-generator]");
+  if (!passwordGenerator) return;
 
   const lengthRange = document.getElementById("passwordLengthRange");
   const lengthNumber = document.getElementById("passwordLengthNumber");
@@ -29,6 +29,21 @@ function initPasswordGenerator() {
   const copyBtn = document.getElementById("copyPasswordBtn");
   const output = document.getElementById("passwordOutput");
   const status = document.getElementById("passwordStatus");
+
+  if (
+    !lengthRange ||
+    !lengthNumber ||
+    !useLowercase ||
+    !useUppercase ||
+    !useDigits ||
+    !useSymbols ||
+    !generateBtn ||
+    !copyBtn ||
+    !output ||
+    !status
+  ) {
+    return;
+  }
 
   const CHARSET = {
     lowercase: "abcdefghijklmnopqrstuvwxyz",

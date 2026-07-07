@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор паролей — DakeCi Space</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../" class="brand">
+        <span class="brand-badge">DC</span>
+        <span>DakeCi Space</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Открыть меню">☰</button>
+      <nav class="site-nav" data-site-nav>
+        <a href="../../" class="nav-link">Главная</a>
+        <a href="../../games/" class="nav-link">Игры</a>
+        <a href="../../programs/" class="nav-link">Программы</a>
+        <a href="../" class="nav-link active">Сервисы</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page page-narrow">
+    <nav class="breadcrumb">
+      <a href="../index.html">← Назад к сервисам</a>
+    </nav>
+
+    <section class="service-tool password-tool" data-password-generator>
+      <div class="tool-header">
+        <h1 class="page-title">Генератор паролей</h1>
+        <p class="page-lead page-description">Создай случайный пароль из букв, цифр и спецсимволов.</p>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-settings">
+          <div class="tool-field">
+            <label class="tool-label" for="passwordLengthRange">Длина пароля</label>
+            <div class="tool-range-row">
+              <input class="tool-range" type="range" id="passwordLengthRange" min="4" max="50" value="16" />
+              <input class="tool-number" type="number" id="passwordLengthNumber" min="4" max="50" value="16" />
+            </div>
+          </div>
+
+          <div class="tool-checkboxes">
+            <label class="tool-check-item">
+              <input type="checkbox" id="useLowercase" checked />
+              <span>Строчные буквы (a-z)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useUppercase" checked />
+              <span>Заглавные буквы (A-Z)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useDigits" checked />
+              <span>Цифры (0-9)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useSymbols" checked />
+              <span>Спецсимволы (!@#$%)</span>
+            </label>
+          </div>
+
+          <div class="tool-actions">
+            <button class="btn btn-primary" type="button" id="generatePasswordBtn">Сгенерировать</button>
+            <button class="btn btn-secondary" type="button" id="copyPasswordBtn">Скопировать</button>
+          </div>
+
+          <p class="tool-status" id="passwordStatus" aria-live="polite"></p>
+        </div>
+
+        <div class="tool-result">
+          <label class="tool-label" for="passwordOutput">Результат</label>
+          <div class="password-output" id="passwordOutput" tabindex="0">Нажмите «Сгенерировать»</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© DakeCi Space — хобби-проекты, игры и инструменты</span>
+      <div class="footer-links">
+        <a href="../../">Главная</a>
+        <a href="../index.html">Сервисы</a>
+        <a href="../../games/">Игры</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/site.js"></script>
+</body>
+</html>
