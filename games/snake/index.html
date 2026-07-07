@@ -803,6 +803,19 @@
       .replace(/"/g, "&quot;");
   }
 
+  function isUserTyping() {
+    const active = document.activeElement;
+    return !!(
+      active &&
+      (
+        active.tagName === "INPUT" ||
+        active.tagName === "TEXTAREA" ||
+        active.tagName === "SELECT" ||
+        active.isContentEditable
+      )
+    );
+  }
+
   async function loadGlobalLeaderboard() {
     bestEl.textContent = getBest();
 
@@ -821,7 +834,8 @@
 
       if (error) throw error;
       renderGlobalLeaderboard(data);
-    } catch {
+    } catch (err) {
+      console.error("Leaderboard load error:", err);
       showLeaderboardError();
     }
   }
@@ -839,10 +853,14 @@
   }
 
   async function savePlayerResult(gameScore) {
-    if (!currentPlayerId || !currentPlayerName) return;
+    if (!currentPlayerId || !currentPlayerName) {
+      console.error("Save player result error: player is not registered");
+      return;
+    }
 
     if (!supabase) {
       showSaveMessage("Рейтинг временно недоступен", true);
+      showLeaderboardError();
       return;
     }
 
@@ -859,7 +877,7 @@
       if (fetchError) throw fetchError;
 
       if (existing) {
-        const { error } = await supabase
+        const { data: updatedRows, error: updateError } = await supabase
           .from("snake_players")
           .update({
             player_name: currentPlayerName,
@@ -869,11 +887,15 @@
             updated_at: now
           })
           .eq("player_id", currentPlayerId)
-          .eq("game", "snake");
+          .eq("game", "snake")
+          .select("player_id");
 
-        if (error) throw error;
+        if (updateError) throw updateError;
+        if (!updatedRows || updatedRows.length === 0) {
+          throw new Error("Update did not affect any rows");
+        }
       } else {
-        const { error } = await supabase
+        const { data: insertedRows, error: insertError } = await supabase
           .from("snake_players")
           .insert([{
             player_id: currentPlayerId,
@@ -884,15 +906,21 @@
             game: "snake",
             created_at: now,
             updated_at: now
-          }]);
+          }])
+          .select("player_id");
 
-        if (error) throw error;
+        if (insertError) throw insertError;
+        if (!insertedRows || insertedRows.length === 0) {
+          throw new Error("Insert did not create a row");
+        }
       }
 
       showSaveMessage("Результат сохранён");
       await loadGlobalLeaderboard();
-    } catch {
+    } catch (err) {
+      console.error("Save player result error:", err);
       showSaveMessage("Рейтинг временно недоступен", true);
+      showLeaderboardError();
     }
   }
 
@@ -1085,9 +1113,9 @@
     canvasWrap.classList.add("flash");
     resetSaveStatus();
     gameOverText.textContent = `Твой результат: ${score}. Рекорд: ${Math.max(score, getBest())}.`;
-    setTimeout(() => {
+    setTimeout(async () => {
       gameOverOverlay.classList.add("show");
-      savePlayerResult(score);
+      await savePlayerResult(score);
     }, 350);
   }
 
@@ -1240,6 +1268,8 @@
   }
 
   document.addEventListener("keydown", (event) => {
+    if (isUserTyping()) return;
+
     const key = event.key.toLowerCase();
 
     // Важно для браузерной игры:
