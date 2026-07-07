@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Змейка — by DakeCi</title>
+  <title>Змейка — DakeCi Space</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
   <style>
     :root {
       --bg1: #111827;
@@ -24,23 +25,13 @@
 
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, var(--bg1), transparent 45%),
-        linear-gradient(135deg, var(--bg2), #020617);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      overflow-x: hidden;
+    body.page-snake {
+      display: block;
+      padding: 0;
     }
 
     .page-wrap {
-      width: min(980px, 100%);
+      width: 100%;
     }
 
     .top-nav {
@@ -55,7 +46,7 @@
       border-radius: 14px;
       background: var(--panel);
       border: 1px solid var(--panel-border);
-      color: #93c5fd;
+      color: var(--accent-blue);
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
@@ -532,7 +523,23 @@
     }
   </style>
 </head>
-<body>
+<body class="page-snake">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../" class="brand">
+        <span class="brand-badge">DC</span>
+        <span>DakeCi Space</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Открыть меню">☰</button>
+      <nav class="site-nav" data-site-nav>
+        <a href="../../" class="nav-link">Главная</a>
+        <a href="../" class="nav-link active">Игры</a>
+        <a href="../../programs/" class="nav-link">Программы</a>
+        <a href="../../services/" class="nav-link">Сервисы</a>
+      </nav>
+    </div>
+  </header>
+
   <div class="player-modal" id="playerModal">
     <div class="player-modal-box">
       <h2>Введите имя игрока</h2>
@@ -542,8 +549,9 @@
     </div>
   </div>
 
+  <main class="page page-narrow">
   <div class="page-wrap">
-    <nav class="top-nav">
+    <nav class="top-nav breadcrumb">
       <a href="../" class="back-link">← Назад к играм</a>
     </nav>
 
@@ -635,7 +643,21 @@
     </aside>
     </div>
   </div>
+  </main>
 
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© DakeCi Space — хобби-проекты, игры и инструменты</span>
+      <div class="footer-links">
+        <a href="../../">Главная</a>
+        <a href="../">Игры</a>
+        <a href="../../programs/">Программы</a>
+        <a href="../../services/">Сервисы</a>
+      </div>
+    </div>
+  </footer>
+
+<script src="../../assets/js/site.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {

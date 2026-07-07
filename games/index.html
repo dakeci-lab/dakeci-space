@@ -1,25 +1,53 @@
 <!DOCTYPE html>
-<html lang="kk">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Игры — DakeCi Space</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-  <h1>Игры</h1>
-  <p>Бұл жерде менің мини-ойындарым жиналады.</p>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="brand">
+        <span class="brand-badge">DC</span>
+        <span>DakeCi Space</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Открыть меню">☰</button>
+      <nav class="site-nav" data-site-nav>
+        <a href="../" class="nav-link">Главная</a>
+        <a href="./" class="nav-link active">Игры</a>
+        <a href="../programs/" class="nav-link">Программы</a>
+        <a href="../services/" class="nav-link">Сервисы</a>
+      </nav>
+    </div>
+  </header>
 
-  <nav>
-    <a href="../">Басты бет</a> |
-    <a href="./snake/">Змейка</a>
-  </nav>
+  <main class="page">
+    <h1 class="page-title">Игры</h1>
+    <p class="page-lead">Выбирай игру и соревнуйся в рейтинге.</p>
 
-  <h2>Ойындар тізімі</h2>
+    <div class="card-grid">
+      <article class="card">
+        <div class="card-icon green">🐍</div>
+        <h3>Змейка</h3>
+        <p>Классическая змейка с уровнями, едой и таблицей рекордов.</p>
+        <a href="./snake/" class="btn btn-primary">Играть</a>
+      </article>
+    </div>
+  </main>
 
-  <div>
-    <h3>Змейка</h3>
-    <p>Классикалық Snake ойыны. Жыланды басқарып, ұпай жина.</p>
-    <a href="./snake/">Ойнау</a>
-  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© DakeCi Space — хобби-проекты, игры и инструменты</span>
+      <div class="footer-links">
+        <a href="../">Главная</a>
+        <a href="../programs/">Программы</a>
+        <a href="../services/">Сервисы</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/site.js"></script>
 </body>
 </html>

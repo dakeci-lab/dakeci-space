@@ -1,18 +1,98 @@
 <!DOCTYPE html>
-<html lang="kk">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DakeCi Space</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-  <h1>DakeCi Space</h1>
-  <p>Менің хобби жобаларым: ойындар, бағдарламалар және сервистер.</p>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="./" class="brand">
+        <span class="brand-badge">DC</span>
+        <span>DakeCi Space</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Открыть меню">☰</button>
+      <nav class="site-nav" data-site-nav>
+        <a href="./" class="nav-link active">Главная</a>
+        <a href="./games/" class="nav-link">Игры</a>
+        <a href="./programs/" class="nav-link">Программы</a>
+        <a href="./services/" class="nav-link">Сервисы</a>
+      </nav>
+    </div>
+  </header>
 
-  <nav>
-    <a href="./games/">Игры</a> |
-    <a href="./programs/">Программы</a> |
-    <a href="./services/">Сервисы</a>
-  </nav>
+  <main class="page">
+    <section class="hero">
+      <h1>DakeCi Space</h1>
+      <p>Игры, программы и полезные сервисы в одном месте.</p>
+      <div class="hero-actions">
+        <a href="./games/" class="btn btn-primary">🎮 Перейти к играм</a>
+        <a href="./services/" class="btn btn-secondary">🧰 Смотреть сервисы</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Разделы</h2>
+        <p>Выбери направление</p>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-icon green">🎮</div>
+          <h3>Игры</h3>
+          <p>Мини-игры с рейтингом, уровнями и соревнованием с друзьями.</p>
+          <a href="./games/" class="btn btn-primary">Открыть игры</a>
+        </article>
+        <article class="card">
+          <div class="card-icon blue">⚙️</div>
+          <h3>Программы</h3>
+          <p>Полезные программы и инструменты для повседневных задач.</p>
+          <a href="./programs/" class="btn btn-secondary">Смотреть программы</a>
+        </article>
+        <article class="card">
+          <div class="card-icon orange">🧰</div>
+          <h3>Сервисы</h3>
+          <p>Онлайн-сервисы и мини-инструменты прямо в браузере.</p>
+          <a href="./services/" class="btn btn-secondary">Смотреть сервисы</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Последние обновления</h2>
+        <p>Что нового на портале</p>
+      </div>
+      <div class="updates-list">
+        <div class="update-item">
+          <strong>🐍 Змейка</strong>
+          <span>Игра с уровнями, едой и глобальным рейтингом</span>
+        </div>
+        <div class="update-item">
+          <strong>⚙️ Скоро: программы</strong>
+          <span>Раздел в разработке</span>
+        </div>
+        <div class="update-item">
+          <strong>🧰 Скоро: сервисы</strong>
+          <span>Раздел в разработке</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© DakeCi Space — хобби-проекты, игры и инструменты</span>
+      <div class="footer-links">
+        <a href="./games/">Игры</a>
+        <a href="./programs/">Программы</a>
+        <a href="./services/">Сервисы</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./assets/js/site.js"></script>
 </body>
 </html>
