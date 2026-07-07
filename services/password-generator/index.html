@@ -28,7 +28,7 @@
       <a href="../index.html">← Назад к сервисам</a>
     </nav>
 
-    <section class="service-tool password-tool" data-password-generator>
+    <section class="service-tool password-tool password-generator" data-password-generator>
       <div class="tool-header">
         <h1 class="page-title">Генератор паролей</h1>
         <p class="page-lead page-description">Создай случайный пароль из букв, цифр и спецсимволов.</p>
@@ -39,41 +39,41 @@
           <div class="tool-field">
             <label class="tool-label" for="passwordLengthRange">Длина пароля</label>
             <div class="tool-range-row">
-              <input class="tool-range" type="range" id="passwordLengthRange" min="4" max="50" value="16" />
-              <input class="tool-number" type="number" id="passwordLengthNumber" min="4" max="50" value="16" />
+              <input class="tool-range" type="range" data-password-range min="4" max="50" value="16" />
+              <input class="tool-number" type="number" data-password-length min="4" max="50" value="16" />
             </div>
           </div>
 
           <div class="tool-checkboxes">
             <label class="tool-check-item">
-              <input type="checkbox" id="useLowercase" checked />
+              <input type="checkbox" data-password-lowercase checked />
               <span>Строчные буквы (a-z)</span>
             </label>
             <label class="tool-check-item">
-              <input type="checkbox" id="useUppercase" checked />
+              <input type="checkbox" data-password-uppercase checked />
               <span>Заглавные буквы (A-Z)</span>
             </label>
             <label class="tool-check-item">
-              <input type="checkbox" id="useDigits" checked />
+              <input type="checkbox" data-password-digits checked />
               <span>Цифры (0-9)</span>
             </label>
             <label class="tool-check-item">
-              <input type="checkbox" id="useSymbols" checked />
+              <input type="checkbox" data-password-symbols checked />
               <span>Спецсимволы (!@#$%)</span>
             </label>
           </div>
 
           <div class="tool-actions">
-            <button class="btn btn-primary" type="button" id="generatePasswordBtn">Сгенерировать</button>
-            <button class="btn btn-secondary" type="button" id="copyPasswordBtn">Скопировать</button>
+            <button class="btn btn-primary" type="button" data-password-generate>Сгенерировать</button>
+            <button class="btn btn-secondary" type="button" data-password-copy>Скопировать</button>
           </div>
 
-          <p class="tool-status" id="passwordStatus" aria-live="polite"></p>
+          <p class="tool-status" data-password-message aria-live="polite"></p>
         </div>
 
         <div class="tool-result">
-          <label class="tool-label" for="passwordOutput">Результат</label>
-          <div class="password-output" id="passwordOutput" tabindex="0">Нажмите «Сгенерировать»</div>
+          <label class="tool-label">Результат</label>
+          <div class="password-output" data-password-result tabindex="0">Нажмите «Сгенерировать»</div>
         </div>
       </div>
     </section>

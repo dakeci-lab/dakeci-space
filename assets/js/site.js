@@ -19,134 +19,138 @@ function initPasswordGenerator() {
   const passwordGenerator = document.querySelector("[data-password-generator]");
   if (!passwordGenerator) return;
 
-  const lengthRange = document.getElementById("passwordLengthRange");
-  const lengthNumber = document.getElementById("passwordLengthNumber");
-  const useLowercase = document.getElementById("useLowercase");
-  const useUppercase = document.getElementById("useUppercase");
-  const useDigits = document.getElementById("useDigits");
-  const useSymbols = document.getElementById("useSymbols");
-  const generateBtn = document.getElementById("generatePasswordBtn");
-  const copyBtn = document.getElementById("copyPasswordBtn");
-  const output = document.getElementById("passwordOutput");
-  const status = document.getElementById("passwordStatus");
+  const resultEl = passwordGenerator.querySelector("[data-password-result]");
+  const messageEl = passwordGenerator.querySelector("[data-password-message]");
+  const rangeEl = passwordGenerator.querySelector("[data-password-range]");
+  const lengthEl = passwordGenerator.querySelector("[data-password-length]");
+  const generateBtn = passwordGenerator.querySelector("[data-password-generate]");
+  const copyBtn = passwordGenerator.querySelector("[data-password-copy]");
+  const lowercaseEl = passwordGenerator.querySelector("[data-password-lowercase]");
+  const uppercaseEl = passwordGenerator.querySelector("[data-password-uppercase]");
+  const digitsEl = passwordGenerator.querySelector("[data-password-digits]");
+  const symbolsEl = passwordGenerator.querySelector("[data-password-symbols]");
 
   if (
-    !lengthRange ||
-    !lengthNumber ||
-    !useLowercase ||
-    !useUppercase ||
-    !useDigits ||
-    !useSymbols ||
+    !resultEl ||
+    !messageEl ||
+    !rangeEl ||
+    !lengthEl ||
     !generateBtn ||
     !copyBtn ||
-    !output ||
-    !status
+    !lowercaseEl ||
+    !uppercaseEl ||
+    !digitsEl ||
+    !symbolsEl
   ) {
     return;
   }
 
-  const CHARSET = {
-    lowercase: "abcdefghijklmnopqrstuvwxyz",
-    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    digits: "0123456789",
-    symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?"
-  };
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const digits = "0123456789";
+  const symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+  const emptyResultText = "Нажмите «Сгенерировать»";
 
-  let currentPassword = "";
+  function normalizeLength(value) {
+    let number = parseInt(value, 10);
 
-  function clampLength(value) {
-    const num = Number(value);
-    if (!Number.isFinite(num)) return 16;
-    return Math.min(50, Math.max(4, Math.round(num)));
+    if (Number.isNaN(number)) {
+      number = 16;
+    }
+
+    if (number < 4) number = 4;
+    if (number > 50) number = 50;
+
+    return number;
   }
 
   function syncLength(value) {
-    const length = clampLength(value);
-    lengthRange.value = String(length);
-    lengthNumber.value = String(length);
+    const length = normalizeLength(value);
+    rangeEl.value = length;
+    lengthEl.value = length;
     return length;
   }
 
-  function setStatus(message, isError = false) {
-    status.textContent = message;
-    status.classList.toggle("error", isError);
+  function getCharacters() {
+    let chars = "";
+
+    if (lowercaseEl.checked) chars += lowercase;
+    if (uppercaseEl.checked) chars += uppercase;
+    if (digitsEl.checked) chars += digits;
+    if (symbolsEl.checked) chars += symbols;
+
+    return chars;
   }
 
-  function getCharacterPool() {
-    let pool = "";
-
-    if (useLowercase.checked) pool += CHARSET.lowercase;
-    if (useUppercase.checked) pool += CHARSET.uppercase;
-    if (useDigits.checked) pool += CHARSET.digits;
-    if (useSymbols.checked) pool += CHARSET.symbols;
-
-    return pool;
+  function setMessage(text, isError = false) {
+    messageEl.textContent = text;
+    messageEl.classList.toggle("error", isError);
   }
 
   function generatePassword() {
-    const pool = getCharacterPool();
+    const length = syncLength(lengthEl.value);
+    const chars = getCharacters();
 
-    if (!pool) {
-      currentPassword = "";
-      output.textContent = "—";
-      setStatus("Выберите хотя бы один тип символов", true);
+    if (!chars) {
+      resultEl.textContent = emptyResultText;
+      setMessage("Выберите хотя бы один тип символов", true);
       return "";
     }
 
-    const length = syncLength(lengthNumber.value);
     let password = "";
 
     for (let i = 0; i < length; i++) {
-      const index = Math.floor(Math.random() * pool.length);
-      password += pool[index];
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      password += chars[randomIndex];
     }
 
-    currentPassword = password;
-    output.textContent = password;
-    setStatus("");
+    resultEl.textContent = password;
+    setMessage("");
     return password;
   }
 
-  async function copyPassword() {
-    if (!currentPassword) {
-      setStatus("Сначала сгенерируйте пароль", true);
-      return;
-    }
-
-    if (!navigator.clipboard || !navigator.clipboard.writeText) {
-      setStatus("Не удалось скопировать пароль", true);
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(currentPassword);
-      setStatus("Пароль скопирован");
-    } catch {
-      setStatus("Не удалось скопировать пароль", true);
-    }
-  }
-
-  lengthRange.addEventListener("input", () => {
-    syncLength(lengthRange.value);
+  rangeEl.addEventListener("input", () => {
+    syncLength(rangeEl.value);
     generatePassword();
   });
 
-  lengthNumber.addEventListener("input", () => {
-    syncLength(lengthNumber.value);
+  lengthEl.addEventListener("input", () => {
+    syncLength(lengthEl.value);
     generatePassword();
   });
 
-  lengthNumber.addEventListener("change", () => {
-    syncLength(lengthNumber.value);
+  lengthEl.addEventListener("change", () => {
+    syncLength(lengthEl.value);
     generatePassword();
   });
 
-  [useLowercase, useUppercase, useDigits, useSymbols].forEach((checkbox) => {
+  [lowercaseEl, uppercaseEl, digitsEl, symbolsEl].forEach((checkbox) => {
     checkbox.addEventListener("change", generatePassword);
   });
 
   generateBtn.addEventListener("click", generatePassword);
-  copyBtn.addEventListener("click", copyPassword);
+
+  copyBtn.addEventListener("click", async () => {
+    const password = resultEl.textContent.trim();
+
+    if (!password || password === emptyResultText) {
+      setMessage("Сначала сгенерируйте пароль", true);
+      return;
+    }
+
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      setMessage("Не удалось скопировать пароль", true);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(password);
+      setMessage("Пароль скопирован");
+    } catch (error) {
+      console.error("Clipboard error:", error);
+      setMessage("Не удалось скопировать пароль", true);
+    }
+  });
 
   generatePassword();
 }
