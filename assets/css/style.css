@@ -456,7 +456,152 @@ img {
   letter-spacing: 0.5px;
 }
 
+.service-tool {
+  margin-bottom: 30px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+.service-tool:hover {
+  border-color: var(--border-hover);
+}
+
+.tool-header {
+  margin-bottom: 18px;
+}
+
+.tool-header .section-title {
+  margin-bottom: 8px;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.tool-settings {
+  display: grid;
+  gap: 14px;
+}
+
+.tool-field {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-label {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.tool-range-row {
+  display: grid;
+  grid-template-columns: 1fr 88px;
+  gap: 10px;
+  align-items: center;
+}
+
+.tool-range {
+  width: 100%;
+  accent-color: var(--accent-green);
+  cursor: pointer;
+}
+
+.tool-number,
+.tool-check {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.tool-number:focus {
+  outline: none;
+  border-color: rgba(34, 197, 94, 0.55);
+}
+
+.tool-checkboxes {
+  display: grid;
+  gap: 10px;
+}
+
+.tool-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.tool-check-item input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-green);
+  cursor: pointer;
+}
+
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tool-result {
+  display: grid;
+  gap: 10px;
+  min-height: 100%;
+}
+
+.password-output {
+  min-height: 120px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(2, 6, 23, 0.65);
+  color: var(--accent-lime);
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  line-height: 1.45;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+}
+
+.tool-status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--accent-green);
+}
+
+.tool-status.error {
+  color: #fca5a5;
+}
+
 @media (max-width: 900px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
   .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

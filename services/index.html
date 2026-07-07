@@ -27,6 +27,56 @@
     <h1 class="page-title">Сервисы</h1>
     <p class="page-lead page-description">Онлайн-сервисы и полезные мини-инструменты.</p>
 
+    <section class="service-tool password-tool" id="passwordTool">
+      <div class="tool-header">
+        <h2 class="section-title">Генератор паролей</h2>
+        <p class="card-description">Создай случайный пароль из букв, цифр и спецсимволов.</p>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-settings">
+          <div class="tool-field">
+            <label class="tool-label" for="passwordLengthRange">Длина пароля</label>
+            <div class="tool-range-row">
+              <input class="tool-range" type="range" id="passwordLengthRange" min="4" max="50" value="16" />
+              <input class="tool-number" type="number" id="passwordLengthNumber" min="4" max="50" value="16" />
+            </div>
+          </div>
+
+          <div class="tool-checkboxes">
+            <label class="tool-check-item">
+              <input type="checkbox" id="useLowercase" checked />
+              <span>Строчные буквы (a-z)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useUppercase" checked />
+              <span>Заглавные буквы (A-Z)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useDigits" checked />
+              <span>Цифры (0-9)</span>
+            </label>
+            <label class="tool-check-item">
+              <input type="checkbox" id="useSymbols" checked />
+              <span>Спецсимволы (!@#$%)</span>
+            </label>
+          </div>
+
+          <div class="tool-actions">
+            <button class="btn btn-primary" type="button" id="generatePasswordBtn">Сгенерировать</button>
+            <button class="btn btn-secondary" type="button" id="copyPasswordBtn">Скопировать</button>
+          </div>
+
+          <p class="tool-status" id="passwordStatus" aria-live="polite"></p>
+        </div>
+
+        <div class="tool-result">
+          <label class="tool-label" for="passwordOutput">Результат</label>
+          <div class="password-output" id="passwordOutput" tabindex="0">Нажмите «Сгенерировать»</div>
+        </div>
+      </div>
+    </section>
+
     <div class="card-grid">
       <article class="card">
         <div class="card-icon orange">🧮</div>
@@ -38,7 +88,7 @@
         <div class="card-icon purple">✨</div>
         <h3 class="card-title">Генераторы</h3>
         <p class="card-description">Генерация текста, данных и идей.</p>
-        <button class="btn btn-secondary btn-disabled" type="button" disabled>Скоро</button>
+        <a href="#passwordTool" class="btn btn-secondary">Открыть генератор</a>
       </article>
       <article class="card">
         <div class="card-icon blue">🧰</div>
